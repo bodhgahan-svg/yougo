@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YOUGO - Watch to Earn</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background-color: #0f0f0f; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .card { background: #1f1f1f; padding: 25px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: center; }
+    h1 { color: #ff0050; margin-bottom: 5px; font-size: 28px; letter-spacing: 1px; }
+    p { color: #aaa; margin-bottom: 20px; font-size: 14px; }
+    .input-group { margin-bottom: 15px; text-align: left; }
+    label { font-size: 12px; color: #ccc; display: block; margin-bottom: 5px; }
+    input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; outline: none; }
+    input:focus { border-color: #ff0050; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 6px; background: #ff0050; color: white; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
+    button:active { background: #e00045; }
+    .toggle { margin-top: 15px; font-size: 13px; color: #aaa; cursor: pointer; }
+    .toggle span { color: #ff0050; text-decoration: underline; }
+    #msg { margin-top: 15px; font-size: 13px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>YOUGO</h1>
+    <p id="sub-title">Watch Videos & Earn Rewards</p>
+
+    <form id="auth-form">
+      <div class="input-group">
+        <label>ईमेल (Email)</label>
+        <input type="email" id="email" placeholder="example@mail.com" required>
+      </div>
+
+      <div class="input-group">
+        <label>पासवर्ड (Password)</label>
+        <input type="password" id="password" placeholder="******" required>
+      </div>
+
+      <button type="submit" id="submit-btn">साइन अप करें (Sign Up)</button>
+    </form>
+
+    <div class="toggle" id="toggle-auth">
+      पहले से अकाउंट है? <span>लॉगिन करें</span>
+    </div>
+
+    <div id="msg"></div>
+  </div>
+
+  <script>
+    let isSignUp = true;
+    const form = document.getElementById('auth-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const toggleAuth = document.getElementById('toggle-auth');
+    const msg = document.getElementById('msg');
+
+    toggleAuth.addEventListener('click', () => {
+      isSignUp = !isSignUp;
+      if (isSignUp) {
+        submitBtn.innerText = 'साइन अप करें (Sign Up)';
+        toggleAuth.innerHTML = 'पहले से अकाउंट है? <span>लॉगिन करें</span>';
+      } else {
+        submitBtn.innerText = 'लॉगिन करें (Login)';
+        toggleAuth.innerHTML = 'नया अकाउंट बनाएं? <span>साइन अप करें</span>';
+      }
+      msg.innerText = '';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.style.color = '#fff';
+      msg.innerText = 'कृपया प्रतीक्षा करें...';
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          msg.style.color = '#00ff73';
+          msg.innerText = isSignUp ? 'अकाउंट बन गया! अब लॉगिन करें।' : 'लॉगिन सफल हुआ!';
+        } else {
+          msg.style.color = '#ff4d4d';
+          msg.innerText = data.error || 'कुछ गड़बड़ हुई!';
+        }
+      } catch (err) {
+        msg.style.color = '#ff4d4d';
+        msg.innerText = 'सर्वर से कनेक्ट नहीं हो सका।';
+      }
+    });
+  </script>
+</body>
+</html>
