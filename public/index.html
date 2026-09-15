@@ -3,78 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YOUGO - Watch to Earn</title>
+  <title>YOUGO - Watch & Earn</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { background-color: #0f0f0f; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-    .card { background: #1f1f1f; padding: 25px; border-radius: 12px; width: 100%; max-width: 380px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: center; }
-    h1 { color: #ff0050; margin-bottom: 5px; font-size: 28px; letter-spacing: 1px; }
-    p { color: #aaa; margin-bottom: 20px; font-size: 14px; }
-    .input-group { margin-bottom: 15px; text-align: left; }
-    label { font-size: 12px; color: #ccc; display: block; margin-bottom: 5px; }
-    input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; outline: none; }
-    input:focus { border-color: #ff0050; }
-    button { width: 100%; padding: 12px; border: none; border-radius: 6px; background: #ff0050; color: white; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
-    button:active { background: #e00045; }
-    .toggle { margin-top: 15px; font-size: 13px; color: #aaa; cursor: pointer; }
-    .toggle span { color: #ff0050; text-decoration: underline; }
-    #msg { margin-top: 15px; font-size: 13px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background-color: #121212; color: #ffffff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    
+    /* Header Bar */
+    header { width: 100%; max-width: 480px; background: #1f1f1f; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 10; }
+    .logo { color: #ff0050; font-size: 22px; font-weight: bold; }
+    .coin-badge { background: #ffe600; color: #000; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 5px; }
+
+    /* Container */
+    .container { width: 100%; max-width: 480px; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    .card { background: #1f1f1f; padding: 20px; border-radius: 12px; }
+
+    /* Auth Forms */
+    input { width: 100%; padding: 12px; margin: 8px 0 16px; background: #2b2b2b; border: 1px solid #444; border-radius: 8px; color: #fff; font-size: 15px; }
+    button { width: 100%; padding: 14px; background: #ff0050; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 16px; cursor: pointer; }
+    button:disabled { background: #555; }
+    .toggle-link { color: #aaa; text-align: center; margin-top: 12px; font-size: 14px; cursor: pointer; text-decoration: underline; }
+
+    /* Video Player Section */
+    .video-card { display: flex; flex-direction: column; gap: 12px; }
+    iframe { width: 100%; height: 240px; border-radius: 8px; border: none; }
+    .timer-text { color: #00ff66; font-size: 14px; text-align: center; font-weight: bold; }
+    
+    .hidden { display: none; }
+    .msg { margin-top: 10px; font-size: 13px; text-align: center; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>YOUGO</h1>
-    <p id="sub-title">Watch Videos & Earn Rewards</p>
+  <!-- App Header -->
+  <header>
+    <div class="logo">YOUGO</div>
+    <div id="coinBadge" class="coin-badge hidden">🪙 <span id="userCoins">0</span> Coins</div>
+  </header>
 
-    <form id="auth-form">
-      <div class="input-group">
-        <label>ईमेल (Email)</label>
-        <input type="email" id="email" placeholder="example@mail.com" required>
-      </div>
-
-      <div class="input-group">
-        <label>पासवर्ड (Password)</label>
-        <input type="password" id="password" placeholder="******" required>
-      </div>
-
-      <button type="submit" id="submit-btn">साइन अप करें (Sign Up)</button>
-    </form>
-
-    <div class="toggle" id="toggle-auth">
-      पहले से अकाउंट है? <span>लॉगिन करें</span>
+  <div class="container">
+    
+    <!-- Auth Section -->
+    <div id="authSection" class="card">
+      <h2 id="authTitle" style="margin-bottom: 15px; text-align: center;">साइन अप करें</h2>
+      <input type="email" id="email" placeholder="ईमेल (Email)" />
+      <input type="password" id="password" placeholder="पासवर्ड (Password)" />
+      <button id="authBtn" onclick="handleAuth()">साइन अप करें (Sign Up)</button>
+      <div class="toggle-link" onclick="toggleAuthMode()" id="toggleBtn">पहले से अकाउंट है? लॉगिन करें</div>
+      <div id="authMsg" class="msg"></div>
     </div>
 
-    <div id="msg"></div>
+    <!-- Main Dashboard / Video Feed Section -->
+    <div id="dashboardSection" class="card hidden">
+      <h3 style="margin-bottom: 10px;">🎥 वीडियो देखें और कॉइन्स कमाएं</h3>
+      <div class="video-card">
+        <!-- Demo Embedded Video -->
+        <iframe id="videoPlayer" src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1" allowfullscreen></iframe>
+        <div id="timerText" class="timer-text">वीडियो चलाएं और 30 सेकंड देखें...</div>
+        <button id="claimBtn" onclick="claimReward()" disabled>पुरस्कार का दावा करें (+10 Coins)</button>
+      </div>
+      <button onclick="logout()" style="background: #333; margin-top: 20px;">लॉग आउट करें</button>
+    </div>
+
   </div>
 
   <script>
-    let isSignUp = true;
-    const form = document.getElementById('auth-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const toggleAuth = document.getElementById('toggle-auth');
-    const msg = document.getElementById('msg');
+    let isLogin = false;
+    let coins = 0;
+    let watchTimer = null;
+    let secondsWatched = 0;
 
-    toggleAuth.addEventListener('click', () => {
-      isSignUp = !isSignUp;
-      if (isSignUp) {
-        submitBtn.innerText = 'साइन अप करें (Sign Up)';
-        toggleAuth.innerHTML = 'पहले से अकाउंट है? <span>लॉगिन करें</span>';
-      } else {
-        submitBtn.innerText = 'लॉगिन करें (Login)';
-        toggleAuth.innerHTML = 'नया अकाउंट बनाएं? <span>साइन अप करें</span>';
-      }
-      msg.innerText = '';
-    });
+    function toggleAuthMode() {
+      isLogin = !isLogin;
+      document.getElementById('authTitle').innerText = isLogin ? 'लॉगिन करें' : 'साइन अप करें';
+      document.getElementById('authBtn').innerText = isLogin ? 'लॉगिन (Login)' : 'साइन अप करें (Sign Up)';
+      document.getElementById('toggleBtn').innerText = isLogin ? 'अकाउंट नहीं है? साइन अप करें' : 'पहले से अकाउंट है? लॉगिन करें';
+    }
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      msg.style.color = '#fff';
-      msg.innerText = 'कृपया प्रतीक्षा करें...';
-
+    async function handleAuth() {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
+      const msg = document.getElementById('authMsg');
+      const endpoint = isLogin ? '/api/login' : '/api/register';
+
+      msg.innerText = 'कृपया प्रतीक्षा करें...';
+      msg.style.color = '#ccc';
 
       try {
         const res = await fetch(endpoint, {
@@ -82,21 +94,60 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
         });
-
         const data = await res.json();
 
         if (res.ok) {
-          msg.style.color = '#00ff73';
-          msg.innerText = isSignUp ? 'अकाउंट बन गया! अब लॉगिन करें।' : 'लॉगिन सफल हुआ!';
+          msg.style.color = '#00ff66';
+          msg.innerText = isLogin ? 'लॉगिन सफल!' : 'अकाउंट बन गया!';
+          showDashboard();
         } else {
-          msg.style.color = '#ff4d4d';
-          msg.innerText = data.error || 'कुछ गड़बड़ हुई!';
+          msg.style.color = '#ff4444';
+          msg.innerText = data.error || 'कुछ गड़बड़ हुई';
         }
       } catch (err) {
-        msg.style.color = '#ff4d4d';
-        msg.innerText = 'सर्वर से कनेक्ट नहीं हो सका।';
+        msg.style.color = '#ff4444';
+        msg.innerText = 'सर्वर कनेक्शन एरर';
       }
-    });
+    }
+
+    function showDashboard() {
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('dashboardSection').classList.remove('hidden');
+      document.getElementById('coinBadge').classList.remove('hidden');
+      startVideoTracking();
+    }
+
+    function startVideoTracking() {
+      // 30 second timer simulate for reward
+      secondsWatched = 0;
+      document.getElementById('claimBtn').disabled = true;
+      document.getElementById('timerText').innerText = 'वीडियो देखकर 30 सेकंड प्रतीक्षा करें...';
+      
+      clearInterval(watchTimer);
+      watchTimer = setInterval(() => {
+        secondsWatched++;
+        document.getElementById('timerText').innerText = `प्रतीक्षा करें: ${30 - secondsWatched} सेकंड`;
+        if (secondsWatched >= 30) {
+          clearInterval(watchTimer);
+          document.getElementById('timerText').innerText = '🎉 आप 10 कॉइन्स क्लेम कर सकते हैं!';
+          document.getElementById('claimBtn').disabled = false;
+        }
+      }, 1000);
+    }
+
+    function claimReward() {
+      coins += 10;
+      document.getElementById('userCoins').innerText = coins;
+      alert('बधाई हो! आपको 10 Coins मिल गए हैं।');
+      startVideoTracking(); // Reset timer for next round
+    }
+
+    function logout() {
+      clearInterval(watchTimer);
+      document.getElementById('authSection').classList.remove('hidden');
+      document.getElementById('dashboardSection').classList.add('hidden');
+      document.getElementById('coinBadge').classList.add('hidden');
+    }
   </script>
 </body>
 </html>
