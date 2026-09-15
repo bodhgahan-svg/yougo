@@ -68,8 +68,8 @@ app.post('/api/auth/signup', async (req, res) => {
   }
 });
 
-// 2. LOGIN (यूजर लॉगिन)
-app.post('/api/auth/login', async (req, res) => {
+// 2. LOGIN (लॉगिन करें)
+app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -85,14 +85,15 @@ app.post('/api/auth/login', async (req, res) => {
     if (error) throw error;
 
     res.json({
-      message: 'Login successful!',
+      message: 'Login successful',
       token: data.session.access_token,
-      user: data.user
+      user: data.user,
     });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`YOUGO Server running on port ${PORT}`);
