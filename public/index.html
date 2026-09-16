@@ -3,191 +3,170 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>YOUGO - Endless Reels</title>
+  <title>YOUGO - Addictive Reels</title>
   <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-  html, body { width: 100%; height: 100%; overflow: hidden; background-color: #000; color: #fff; }
-  
-  /* Fixed Header */
-  header { position: fixed; top: 0; width: 100%; z-index: 50; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%); }
-  .logo { color: #ff0050; font-size: 20px; font-weight: bold; }
-  .coin-badge { background: #ffe600; color: #000; padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; color: #fff; touch-action: manipulation; }
 
-  /* Full Screen Reel Card */
-  .reels-wrapper { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
-  .reel-card { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; display: flex; justify-content: center; align-items: center; background: #000; }
-  
-  iframe { width: 100vw; height: 100vh; border: none; object-fit: cover; }
+    /* Top Floating Header */
+    header { 
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 100; 
+      padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; 
+      background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%); 
+    }
+    .logo { color: #fff; font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+    .nav-tabs { font-size: 15px; font-weight: bold; color: rgba(255,255,255,0.6); }
+    .nav-tabs span.active { color: #fff; border-bottom: 2px solid #ff0050; padding-bottom: 4px; margin-right: 15px; }
 
-  /* Bottom Controls Overlay (Fixed Layout) */
-  .overlay { position: absolute; bottom: 30px; left: 5%; width: 90%; display: flex; flex-direction: column; gap: 8px; z-index: 40; }
-  .timer-text { color: #00ff66; font-size: 13px; text-align: center; font-weight: bold; background: rgba(0,0,0,0.6); padding: 4px; border-radius: 6px; }
-  .claim-btn { width: 100%; padding: 12px; background: #ff0050; border: none; border-radius: 25px; color: white; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 10px rgba(255,0,80,0.4); }
-  .claim-btn:disabled { background: #444; opacity: 0.6; box-shadow: none; }
+    /* Vertical Reels Viewport */
+    .reels-viewport { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+    .reel-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+    iframe { width: 100vw; height: 100vh; border: none; pointer-events: auto; }
 
-  /* Auth Screen */
-  .auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 100; display: flex; justify-content: center; align-items: center; padding: 20px; }
-  .card { background: #1f1f1f; padding: 25px; border-radius: 12px; width: 100%; max-width: 360px; }
-  input { width: 100%; padding: 12px; margin: 8px 0 16px; background: #2b2b2b; border: 1px solid #444; border-radius: 8px; color: #fff; }
-  .hidden { display: none !important; }
-</style>
+    /* Right Action Bar (Instagram Style) */
+    .right-actions {
+      position: fixed; right: 15px; bottom: 80px; z-index: 90;
+      display: flex; flex-direction: column; gap: 22px; align-items: center;
+    }
+    .action-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+    .action-icon { 
+      width: 45px; height: 45px; background: rgba(255,255,255,0.15); 
+      border-radius: 50%; display: flex; justify-content: center; align-items: center; 
+      font-size: 22px; backdrop-filter: blur(8deg); transition: transform 0.1s;
+    }
+    .action-icon:active { transform: scale(0.85); }
+    .action-text { font-size: 12px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 
+    /* Bottom Info Overlay */
+    .bottom-info {
+      position: fixed; bottom: 25px; left: 15px; width: 75%; z-index: 90;
+      display: flex; flex-direction: column; gap: 8px; text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+    }
+    .username { font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+    .follow-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 6px; padding: 3px 10px; font-size: 12px; }
+    .caption { font-size: 14px; opacity: 0.9; line-height: 1.3; }
+
+    /* Dopamine Surprise Popups */
+    .dopamine-popup {
+      position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0);
+      background: linear-gradient(135deg, #ff0050, #00f2fe); padding: 12px 24px;
+      border-radius: 30px; font-weight: 900; font-size: 18px; color: #fff;
+      z-index: 150; box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+    }
+    .dopamine-popup.show { transform: translate(-50%, -50%) scale(1.1); }
+  </style>
 </head>
 <body>
 
   <header>
     <div class="logo">YOUGO</div>
-    <div id="coinBadge" class="coin-badge hidden">🪙 <span id="userCoins">0</span></div>
+    <div class="nav-tabs">
+      <span class="active">For You</span>
+      <span>Trending</span>
+    </div>
   </header>
 
-  <!-- Login Modal -->
-  <div id="authOverlay" class="auth-overlay">
-    <div class="card">
-      <h2 id="authTitle" style="margin-bottom: 15px; text-align: center;">लॉगिन करें</h2>
-      <input type="email" id="email" placeholder="ईमेल (Email)" />
-      <input type="password" id="password" placeholder="पासवर्ड (Password)" />
-      <button onclick="handleAuth()" style="width:100%; padding:14px; background:#ff0050; border:none; border-radius:8px; color:#fff; font-weight:bold;">लॉगिन</button>
-      <div style="color:#aaa; text-align:center; margin-top:12px; cursor:pointer;" onclick="toggleAuthMode()" id="toggleBtn">अकाउंट नहीं है? साइन अप करें</div>
-      <div id="authMsg" style="margin-top:10px; font-size:13px; text-align:center;"></div>
+  <div class="reels-viewport">
+    <div class="reel-container">
+      <iframe id="videoPlayer" allow="autoplay" allowfullscreen></iframe>
     </div>
-  </div>
 
-  <!-- Swipable Feed -->
-  <div id="feedContainer" class="reels-wrapper hidden">
-    <div class="reel-card">
-      <iframe id="videoPlayer" src="" allow="autoplay" allowfullscreen></iframe>
-      <div class="overlay">
-        <div id="timerText" class="timer-text">स्वाइप करें या 15 सेकंड देखें...</div>
-        <button id="claimBtn" class="claim-btn" onclick="claimReward()" disabled>पुरस्कार लें (+10 Coins)</button>
+    <!-- Instagram Style Right Action Icons -->
+    <div class="right-actions">
+      <div class="action-btn" onclick="toggleLike(this)">
+        <div class="action-icon">❤️</div>
+        <div class="action-text" id="likeCount">14.2k</div>
+      </div>
+      <div class="action-btn">
+        <div class="action-icon">💬</div>
+        <div class="action-text">840</div>
+      </div>
+      <div class="action-btn" onclick="shareReel()">
+        <div class="action-icon">✈️</div>
+        <div class="action-text">Share</div>
       </div>
     </div>
+
+    <!-- Bottom Caption Section -->
+    <div class="bottom-info">
+      <div class="username">@viral_creators <span class="follow-btn">Follow</span></div>
+      <div class="caption">Wait for the end! 🔥 #reels #viral #trending</div>
+    </div>
   </div>
 
-  <script>
-    let isLogin = true;
-    let coins = 0;
-    let watchTimer = null;
-    let secondsWatched = 0;
-    let currentUserId = null;
+  <!-- Dopamine Surprise Popup Overlay -->
+  <div id="dopaminePopup" class="dopamine-popup">🔥 TRENDING REEL!</div>
 
-    // ट्रेंडिंग वर्टिकल Shorts लिंक्स
-    const shortVideos = [
-      "https://www.youtube.com/embed/tgbNymZ7vqY?autoplay=1&controls=0&loop=1",
-      "https://www.youtube.com/embed/L_LUpnjgPso?autoplay=1&controls=0&loop=1",
-      "https://www.youtube.com/embed/3JZ_D3ELwOQ?autoplay=1&controls=0&loop=1"
+  <script>
+    // Unlimited Viral Shorts Engine
+    const videoIDs = [
+      "tgbNymZ7vqY", "L_LUpnjgPso", "3JZ_D3ELwOQ", 
+      "kJQP7kiw5Fk", "fJ9rUzIMcZQ", "OPf0YbXqDm0",
+      "K4TOrB7at0Y", "d9MyW72ELq0", "e-ORhEE9VVg"
     ];
     let currentIndex = 0;
+    let liked = false;
 
-    // Touch Swipe Detection
-    let touchStartY = 0;
-    let touchEndY = 0;
-
-    document.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; });
+    // Smooth Touch Gesture for Unlimited Vertical Swipe
+    let startY = 0;
+    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, false);
     document.addEventListener('touchend', e => {
-      touchEndY = e.changedTouches[0].screenY;
-      handleSwipe();
-    });
-
-    function handleSwipe() {
-      if (touchStartY - touchEndY > 50) {
-        // Swipe Up (Next Video)
-        nextReel();
-      } else if (touchEndY - touchStartY > 50) {
-        // Swipe Down (Previous Video)
-        prevReel();
-      }
-    }
-
-    function toggleAuthMode() {
-      isLogin = !isLogin;
-      document.getElementById('authTitle').innerText = isLogin ? 'लॉगिन करें' : 'साइन अप करें';
-      document.getElementById('toggleBtn').innerText = isLogin ? 'अकाउंट नहीं है? साइन अप करें' : 'पहले से अकाउंट है? लॉगिन करें';
-    }
-
-    async function handleAuth() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const msg = document.getElementById('authMsg');
-      const endpoint = isLogin ? '/api/login' : '/api/auth/signup';
-
-      msg.innerText = 'प्रतीक्षा करें...';
-
-      try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-          if (isLogin) {
-            currentUserId = data.user.id;
-            document.getElementById('authOverlay').classList.add('hidden');
-            document.getElementById('feedContainer').classList.remove('hidden');
-            document.getElementById('coinBadge').classList.remove('hidden');
-            loadVideo(0);
-          } else {
-            msg.innerText = 'अकाउंट बन गया! लॉगिन करें।';
-            toggleAuthMode();
-          }
-        } else {
-          msg.innerText = data.error || 'एरर आया';
-        }
-      } catch (err) {
-        msg.innerText = 'सर्वर कनेक्शन एरर';
-      }
-    }
+      let endY = e.changedTouches[0].clientY;
+      if (startY - endY > 50) nextReel();      // Swipe Up (Next Video)
+      else if (endY - startY > 50) prevReel(); // Swipe Down (Previous Video)
+    }, false);
 
     function loadVideo(index) {
       currentIndex = index;
-      document.getElementById('videoPlayer').src = shortVideos[currentIndex];
-      startVideoTracking();
+      const id = videoIDs[currentIndex];
+      
+      // Auto-play seamless embed
+      document.getElementById('videoPlayer').src = 
+        `https://www.youtube.com/embed/${id}?autoplay=1&controls=0&modestbranding=1&loop=1&playlist=${id}`;
+
+      // Dopamine Random Trigger (Every few swipes)
+      triggerDopamineEffect();
     }
 
     function nextReel() {
-      currentIndex = (currentIndex + 1) % shortVideos.length;
+      currentIndex = (currentIndex + 1) % videoIDs.length;
       loadVideo(currentIndex);
     }
 
     function prevReel() {
-      currentIndex = (currentIndex - 1 + shortVideos.length) % shortVideos.length;
+      currentIndex = (currentIndex - 1 + videoIDs.length) % videoIDs.length;
       loadVideo(currentIndex);
     }
 
-    function startVideoTracking() {
-      secondsWatched = 0;
-      document.getElementById('claimBtn').disabled = true;
-      clearInterval(watchTimer);
-
-      watchTimer = setInterval(() => {
-        secondsWatched++;
-        document.getElementById('timerText').innerText = `प्रतीक्षा करें: ${15 - secondsWatched} सेकंड`;
-        if (secondsWatched >= 15) {
-          clearInterval(watchTimer);
-          document.getElementById('timerText').innerText = '🎉 स्वाइप करने से पहले 10 Coins लें!';
-          document.getElementById('claimBtn').disabled = false;
-        }
-      }, 1000);
+    function toggleLike(btn) {
+      liked = !liked;
+      const icon = btn.querySelector('.action-icon');
+      icon.style.transform = "scale(1.4)";
+      setTimeout(() => icon.style.transform = "scale(1)", 200);
+      icon.innerText = liked ? "💖" : "❤️";
     }
 
-    async function claimReward() {
-      try {
-        const res = await fetch('/api/user/add-coins', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId: currentUserId, coinsToAdd: 10 })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          coins = data.totalCoins;
-          document.getElementById('userCoins').innerText = coins;
-          nextReel();
-        }
-      } catch (err) {
-        console.error(err);
+    function shareReel() {
+      if (navigator.share) {
+        navigator.share({ title: 'YOUGO Reel', url: window.location.href });
       }
     }
+
+    function triggerDopamineEffect() {
+      // 30% Chance to trigger a psychological surprise popup
+      if (Math.random() < 0.35) {
+        const popup = document.getElementById('dopaminePopup');
+        const phrases = ["🔥 HOT REEL!", "⚡ VIRAL NOW!", "🎉 1M+ VIEWS!", "✨ MUST WATCH!"];
+        popup.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+        
+        popup.classList.add('show');
+        setTimeout(() => popup.classList.remove('show'), 1500);
+      }
+    }
+
+    // First Load
+    loadVideo(0);
   </script>
 </body>
 </html>
