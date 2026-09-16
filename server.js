@@ -94,6 +94,40 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// 3. UPDATE COINS (कॉइन्स डेटाबेस में सेव करें)
+app.post('/api/user/add-coins', async (req, res) => {
+  const { userId, coinsToAdd } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  try {
+    // यूज़र के मौजूदा कॉइन्स लाएं
+    const { data: user, error: fetchError } = await supabase
+      .from('users')
+      .select('coins')
+      .eq('id', userId)
+      .single();
+
+    if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
+
+    const currentCoins = user?.coins || 0;
+    const updatedCoins = currentCoins + coinsToAdd;
+
+    // Supabase डेटाबेस में कॉइन्स अपडेट करें
+    const { data, error } = await supabase
+      .from('users')
+      .upsert({ id: userId, coins: updatedCoins, updated_at: new Date() })
+      .select();
+
+    if (error) throw error;
+
+    res.json({ message: 'Coins updated successfully', totalCoins: updatedCoins });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`YOUGO Server running on port ${PORT}`);
