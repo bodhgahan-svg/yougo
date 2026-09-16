@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>YOUGO - Addictive Reels</title>
+  <title>YOUGO - Clean Reels</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #000; color: #fff; touch-action: manipulation; }
@@ -11,47 +11,64 @@
     /* Top Floating Header */
     header { 
       position: fixed; top: 0; left: 0; width: 100%; z-index: 100; 
-      padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; 
-      background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%); 
+      padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; 
+      background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%); 
+      pointer-events: none;
     }
-    .logo { color: #fff; font-size: 20px; font-weight: 900; letter-spacing: 1px; }
-    .nav-tabs { font-size: 15px; font-weight: bold; color: rgba(255,255,255,0.6); }
+    .logo { color: #fff; font-size: 22px; font-weight: 900; letter-spacing: 1px; pointer-events: auto; }
+    .nav-tabs { font-size: 15px; font-weight: bold; color: rgba(255,255,255,0.6); pointer-events: auto; }
     .nav-tabs span.active { color: #fff; border-bottom: 2px solid #ff0050; padding-bottom: 4px; margin-right: 15px; }
 
-    /* Vertical Reels Viewport */
-    .reels-viewport { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
-    .reel-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
-    iframe { width: 100vw; height: 100vh; border: none; pointer-events: auto; }
+    /* Clean Video Container (YouTube Player Cropping) */
+    .reels-viewport { width: 100vw; height: 100vh; position: relative; overflow: hidden; background: #000; }
+    .video-wrapper { 
+      width: 100%; height: 100%; position: absolute; top: 0; left: 0; 
+      overflow: hidden; pointer-events: none; 
+    }
+    
+    /* Crop top title bar & extra YouTube controls */
+    iframe { 
+      width: 100vw; 
+      height: 120vh; 
+      position: absolute; 
+      top: -10vh; 
+      left: 0; 
+      border: none; 
+      transform: scale(1.15); 
+      pointer-events: auto; 
+    }
 
     /* Right Action Bar (Instagram Style) */
     .right-actions {
-      position: fixed; right: 15px; bottom: 80px; z-index: 90;
+      position: fixed; right: 15px; bottom: 90px; z-index: 90;
       display: flex; flex-direction: column; gap: 22px; align-items: center;
     }
-    .action-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+    .action-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
     .action-icon { 
-      width: 45px; height: 45px; background: rgba(255,255,255,0.15); 
+      width: 46px; height: 46px; background: rgba(255,255,255,0.2); 
       border-radius: 50%; display: flex; justify-content: center; align-items: center; 
-      font-size: 22px; backdrop-filter: blur(8deg); transition: transform 0.1s;
+      font-size: 22px; backdrop-filter: blur(10px); transition: transform 0.1s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
     .action-icon:active { transform: scale(0.85); }
-    .action-text { font-size: 12px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+    .action-text { font-size: 12px; font-weight: 600; text-shadow: 0 1px 4px rgba(0,0,0,0.9); }
 
     /* Bottom Info Overlay */
     .bottom-info {
       position: fixed; bottom: 25px; left: 15px; width: 75%; z-index: 90;
       display: flex; flex-direction: column; gap: 8px; text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      pointer-events: none;
     }
-    .username { font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 8px; }
-    .follow-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.5); border-radius: 6px; padding: 3px 10px; font-size: 12px; }
-    .caption { font-size: 14px; opacity: 0.9; line-height: 1.3; }
+    .username { font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 8px; pointer-events: auto; }
+    .follow-btn { background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.6); border-radius: 6px; padding: 3px 10px; font-size: 12px; }
+    .caption { font-size: 13px; opacity: 0.9; line-height: 1.3; }
 
     /* Dopamine Surprise Popups */
     .dopamine-popup {
-      position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%) scale(0);
+      position: fixed; top: 45%; left: 50%; transform: translate(-50%, -50%) scale(0);
       background: linear-gradient(135deg, #ff0050, #00f2fe); padding: 12px 24px;
       border-radius: 30px; font-weight: 900; font-size: 18px; color: #fff;
-      z-index: 150; box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none;
+      z-index: 150; box-shadow: 0 10px 30px rgba(0,0,0,0.6); pointer-events: none;
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27);
     }
     .dopamine-popup.show { transform: translate(-50%, -50%) scale(1.1); }
@@ -68,15 +85,14 @@
   </header>
 
   <div class="reels-viewport">
-    <div class="reel-container">
-      <iframe id="videoPlayer" allow="autoplay" allowfullscreen></iframe>
+    <div class="video-wrapper">
+      <iframe id="videoPlayer" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
-    <!-- Instagram Style Right Action Icons -->
     <div class="right-actions">
       <div class="action-btn" onclick="toggleLike(this)">
         <div class="action-icon">❤️</div>
-        <div class="action-text" id="likeCount">14.2k</div>
+        <div class="action-text">14.2k</div>
       </div>
       <div class="action-btn">
         <div class="action-icon">💬</div>
@@ -88,44 +104,39 @@
       </div>
     </div>
 
-    <!-- Bottom Caption Section -->
     <div class="bottom-info">
       <div class="username">@viral_creators <span class="follow-btn">Follow</span></div>
       <div class="caption">Wait for the end! 🔥 #reels #viral #trending</div>
     </div>
   </div>
 
-  <!-- Dopamine Surprise Popup Overlay -->
   <div id="dopaminePopup" class="dopamine-popup">🔥 TRENDING REEL!</div>
 
   <script>
-    // Unlimited Viral Shorts Engine
     const videoIDs = [
       "tgbNymZ7vqY", "L_LUpnjgPso", "3JZ_D3ELwOQ", 
       "kJQP7kiw5Fk", "fJ9rUzIMcZQ", "OPf0YbXqDm0",
-      "K4TOrB7at0Y", "d9MyW72ELq0", "e-ORhEE9VVg"
+      "K4TOrB7at0Y", "d9MyW72ELq0"
     ];
     let currentIndex = 0;
     let liked = false;
 
-    // Smooth Touch Gesture for Unlimited Vertical Swipe
     let startY = 0;
     document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, false);
     document.addEventListener('touchend', e => {
       let endY = e.changedTouches[0].clientY;
-      if (startY - endY > 50) nextReel();      // Swipe Up (Next Video)
-      else if (endY - startY > 50) prevReel(); // Swipe Down (Previous Video)
+      if (startY - endY > 50) nextReel();
+      else if (endY - startY > 50) prevReel();
     }, false);
 
     function loadVideo(index) {
       currentIndex = index;
       const id = videoIDs[currentIndex];
       
-      // Auto-play seamless embed
+      // Clean Embed Parameters
       document.getElementById('videoPlayer').src = 
-        `https://www.youtube.com/embed/${id}?autoplay=1&controls=0&modestbranding=1&loop=1&playlist=${id}`;
+        `https://www.youtube.com/embed/${id}?autoplay=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&showinfo=0&loop=1&playlist=${id}`;
 
-      // Dopamine Random Trigger (Every few swipes)
       triggerDopamineEffect();
     }
 
@@ -142,7 +153,7 @@
     function toggleLike(btn) {
       liked = !liked;
       const icon = btn.querySelector('.action-icon');
-      icon.style.transform = "scale(1.4)";
+      icon.style.transform = "scale(1.3)";
       setTimeout(() => icon.style.transform = "scale(1)", 200);
       icon.innerText = liked ? "💖" : "❤️";
     }
@@ -154,18 +165,16 @@
     }
 
     function triggerDopamineEffect() {
-      // 30% Chance to trigger a psychological surprise popup
       if (Math.random() < 0.35) {
         const popup = document.getElementById('dopaminePopup');
         const phrases = ["🔥 HOT REEL!", "⚡ VIRAL NOW!", "🎉 1M+ VIEWS!", "✨ MUST WATCH!"];
         popup.innerText = phrases[Math.floor(Math.random() * phrases.length)];
         
         popup.classList.add('show');
-        setTimeout(() => popup.classList.remove('show'), 1500);
+        setTimeout(() => popup.classList.remove('show'), 1400);
       }
     }
 
-    // First Load
     loadVideo(0);
   </script>
 </body>
